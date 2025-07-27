@@ -41,7 +41,10 @@ export function TopNavbar({
   const [notificationCount] = useState(3); // 模拟通知数量
 
   const handleLogout = () => {
-    logout();
+    // 添加确认对话框
+    if (window.confirm('确定要退出登录吗？')) {
+      logout();
+    }
   };
 
   const getUserInitials = (name: string) => {

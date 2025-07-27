@@ -19,172 +19,269 @@ import { ProfilePage } from '@/pages/profile';
 import { RoleDashboardTestPage } from '@/pages/role-dashboard-test';
 import { LayoutTestPage } from '@/pages/layout-test';
 import { MainLayout } from '@/components/layouts/main-layout';
+import { AuthRequiredRoute, GuestOnlyRoute } from '@/components/auth/ProtectedRoute';
 
 // 根路由
 const rootRoute = createRootRoute({
   component: () => <Outlet />,
 });
 
-// 首页路由 - 重定向到布局测试页
+// 首页路由 - 如果已登录重定向到 dashboard，否则显示首页
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
-  component: () => <MainLayout title="布局系统展示"><LayoutTestPage /></MainLayout>,
+  component: () => <HomePage />,
 });
 
-// 登录页路由 - 不使用布局
+// 登录页路由 - 不使用布局，仅访客可访问
 const loginRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/login',
-  component: LoginPage,
+  component: () => <GuestOnlyRoute><LoginPage /></GuestOnlyRoute>,
 });
 
-// 注册页路由 - 不使用布局
+// 注册页路由 - 不使用布局，仅访客可访问
 const signRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/sign',
-  component: SignPage,
+  component: () => <GuestOnlyRoute><SignPage /></GuestOnlyRoute>,
 });
 
-// 忘记密码页路由 - 不使用布局
+// 忘记密码页路由 - 不使用布局，仅访客可访问
 const forgotPasswordRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/forgot-password',
-  component: ForgotPasswordPage,
+  component: () => <GuestOnlyRoute><ForgotPasswordPage /></GuestOnlyRoute>,
 });
 
-// Dashboard 路由 - 使用布局
+// Dashboard 路由 - 使用布局，需要认证
 const dashboardRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/dashboard',
-  component: () => <MainLayout title="仪表盘"><DashboardPage /></MainLayout>,
+  component: () => (
+    <AuthRequiredRoute>
+      <MainLayout title="仪表盘">
+        <DashboardPage />
+      </MainLayout>
+    </AuthRequiredRoute>
+  ),
 });
 
-// 考试准备页路由 - 全屏，不使用布局
+// 考试准备页路由 - 全屏，需要认证
 const examPrepRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/exam/$examId/prep',
   component: () => {
     const { examId } = examPrepRoute.useParams();
-    return <ExamPrepPage examId={examId} />;
+    return (
+      <AuthRequiredRoute>
+        <ExamPrepPage examId={examId} />
+      </AuthRequiredRoute>
+    );
   },
 });
 
-// 考试进行页路由 - 全屏，不使用布局
+// 考试进行页路由 - 全屏，需要认证
 const examRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/exam/$examId/session/$sessionId',
   component: () => {
     const { examId, sessionId } = examRoute.useParams();
-    return <ExamPage examId={examId} sessionId={sessionId} />;
+    return (
+      <AuthRequiredRoute>
+        <ExamPage examId={examId} sessionId={sessionId} />
+      </AuthRequiredRoute>
+    );
   },
 });
 
-// 考试结果页路由 - 全屏，不使用布局
+// 考试结果页路由 - 全屏，需要认证
 const examResultRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/exam/$examId/result/$resultId',
   component: () => {
     const { examId, resultId } = examResultRoute.useParams();
-    return <ExamResultPage examId={examId} resultId={resultId} />;
+    return (
+      <AuthRequiredRoute>
+        <ExamResultPage examId={examId} resultId={resultId} />
+      </AuthRequiredRoute>
+    );
   },
 });
 
-// 课程详情页路由 - 使用布局
+// 课程详情页路由 - 使用布局，需要认证
 const courseDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/course/$courseId',
   component: () => {
     const { courseId } = courseDetailRoute.useParams();
-    return <MainLayout title="课程详情"><CourseDetailPage courseId={courseId} /></MainLayout>;
+    return (
+      <AuthRequiredRoute>
+        <MainLayout title="课程详情">
+          <CourseDetailPage courseId={courseId} />
+        </MainLayout>
+      </AuthRequiredRoute>
+    );
   },
 });
 
-// 课程列表页路由 - 使用布局
+// 课程列表页路由 - 使用布局，需要认证
 const coursesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/courses',
-  component: () => <MainLayout title="我的课程"><CoursesPage /></MainLayout>,
+  component: () => (
+    <AuthRequiredRoute>
+      <MainLayout title="我的课程">
+        <CoursesPage />
+      </MainLayout>
+    </AuthRequiredRoute>
+  ),
 });
 
-// 通知中心路由 - 使用布局  
+// 通知中心路由 - 使用布局，需要认证
 const notificationsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/notifications',
-  component: () => <MainLayout title="通知中心"><NotificationsPage /></MainLayout>,
+  component: () => (
+    <AuthRequiredRoute>
+      <MainLayout title="通知中心">
+        <NotificationsPage />
+      </MainLayout>
+    </AuthRequiredRoute>
+  ),
 });
 
-// 公告详情路由 - 使用布局
+// 公告详情路由 - 使用布局，需要认证
 const announcementDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/announcement/$announcementId',
   component: () => {
     const { announcementId } = announcementDetailRoute.useParams();
-    return <MainLayout title="公告详情"><AnnouncementDetailPage announcementId={announcementId} /></MainLayout>;
+    return (
+      <AuthRequiredRoute>
+        <MainLayout title="公告详情">
+          <AnnouncementDetailPage announcementId={announcementId} />
+        </MainLayout>
+      </AuthRequiredRoute>
+    );
   },
 });
 
-// 管理端路由 - 使用布局
+// 管理端路由 - 使用布局，需要认证
 const adminPortalRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/admin',
-  component: () => <MainLayout title="管理后台"><AdminPortalPage /></MainLayout>,
+  component: () => (
+    <AuthRequiredRoute>
+      <MainLayout title="管理后台">
+        <AdminPortalPage />
+      </MainLayout>
+    </AuthRequiredRoute>
+  ),
 });
 
-// 测试路由 - 使用布局
+// 测试路由 - 使用布局，需要认证
 const dashboardTestRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/dashboard-test',
-  component: () => <MainLayout title="仪表盘测试"><DashboardTestPage /></MainLayout>,
+  component: () => (
+    <AuthRequiredRoute>
+      <MainLayout title="仪表盘测试">
+        <DashboardTestPage />
+      </MainLayout>
+    </AuthRequiredRoute>
+  ),
 });
 
-// 用户信息页路由 - 使用布局
+// 用户信息页路由 - 使用布局，需要认证
 const profileRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/profile',
-  component: () => <MainLayout title="个人资料"><ProfilePage /></MainLayout>,
+  component: () => (
+    <AuthRequiredRoute>
+      <MainLayout title="个人资料">
+        <ProfilePage />
+      </MainLayout>
+    </AuthRequiredRoute>
+  ),
 });
 
-// 管理员题库管理路由 - 使用布局
+// 管理员题库管理路由 - 使用布局，需要认证
 const adminQuestionBankRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/admin/question-bank',
-  component: () => <MainLayout title="题库管理"><QuestionBankPage /></MainLayout>,
+  component: () => (
+    <AuthRequiredRoute>
+      <MainLayout title="题库管理">
+        <QuestionBankPage />
+      </MainLayout>
+    </AuthRequiredRoute>
+  ),
 });
 
-// 题目编辑器路由 - 使用布局
+// 题目编辑器路由 - 使用布局，需要认证
 const questionEditorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/admin/question-editor/$questionId',
-  component: () => <MainLayout title="题目编辑"><QuestionEditorPage /></MainLayout>,
+  component: () => (
+    <AuthRequiredRoute>
+      <MainLayout title="题目编辑">
+        <QuestionEditorPage />
+      </MainLayout>
+    </AuthRequiredRoute>
+  ),
 });
 
-// 角色Dashboard测试路由 - 使用布局
+// 角色Dashboard测试路由 - 使用布局，需要认证
 const roleDashboardTestRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/role-dashboard-test',
-  component: () => <MainLayout title="角色测试"><RoleDashboardTestPage /></MainLayout>,
+  component: () => (
+    <AuthRequiredRoute>
+      <MainLayout title="角色测试">
+        <RoleDashboardTestPage />
+      </MainLayout>
+    </AuthRequiredRoute>
+  ),
 });
 
-// 消息页路由 - 使用布局
+// 消息页路由 - 使用布局，需要认证
 const messagesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/messages',
-  component: () => <MainLayout title="消息中心"><div className="p-6 text-center text-gray-500">消息中心开发中...</div></MainLayout>,
+  component: () => (
+    <AuthRequiredRoute>
+      <MainLayout title="消息中心">
+        <div className="p-6 text-center text-gray-500">消息中心开发中...</div>
+      </MainLayout>
+    </AuthRequiredRoute>
+  ),
 });
 
-// 设置页路由 - 使用布局
+// 设置页路由 - 使用布局，需要认证
 const settingsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/settings',
-  component: () => <MainLayout title="系统设置"><div className="p-6 text-center text-gray-500">设置页面开发中...</div></MainLayout>,
+  component: () => (
+    <AuthRequiredRoute>
+      <MainLayout title="系统设置">
+        <div className="p-6 text-center text-gray-500">设置页面开发中...</div>
+      </MainLayout>
+    </AuthRequiredRoute>
+  ),
 });
 
-// 布局测试页路由 - 使用布局
+// 布局测试页路由 - 使用布局，需要认证
 const layoutTestRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/layout-test',
-  component: () => <MainLayout title="布局测试"><LayoutTestPage /></MainLayout>,
+  component: () => (
+    <AuthRequiredRoute>
+      <MainLayout title="布局测试">
+        <LayoutTestPage />
+      </MainLayout>
+    </AuthRequiredRoute>
+  ),
 });
 
 // 创建路由树

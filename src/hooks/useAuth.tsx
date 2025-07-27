@@ -1,20 +1,8 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { useRouter } from '@tanstack/react-router';
+import { authApi, saveAuthData, clearAuthData, getCurrentUser, isAuthenticated } from '@/lib/api';
 import type { ReactNode } from 'react';
-
-export type UserRole = 'student' | 'teacher' | 'ta' | 'admin' | 'school_admin';
-
-export interface User {
-  id: string;
-  username: string;
-  name: string;
-  email: string;
-  school: string;
-  avatar?: string;
-  role: UserRole;
-  primaryRole: UserRole;
-  availableRoles: UserRole[];
-  currentRole: UserRole;
-}
+import type { User, UserRole } from '@/types';
 
 interface AuthContextType {
   user: User | null;
@@ -96,10 +84,11 @@ const createMockUser = (account: TestAccount): User => {
     name: account.name,
     email: account.email,
     school: '四川大学',
+    department: account.role === 'teacher' ? '数学学院' : account.role === 'student' ? '计算机学院' : '管理学院',
     avatar: `https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face`,
-    role: account.role,
     primaryRole: account.role,
-    currentRole: account.role
+    currentRole: account.role,
+    createdAt: new Date().toISOString()
   };
 
   // Define available roles for each primary role
@@ -120,37 +109,70 @@ const createMockUser = (account: TestAccount): User => {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
-    // Check for existing session
-    const token = localStorage.getItem('auth_token');
-    const savedRole = localStorage.getItem('saved_role') as UserRole;
-    
-    if (token && savedRole) {
-      // Find the test account for the saved role
-      const account = testAccounts.find(acc => acc.role === savedRole);
-      if (account) {
-        const mockUser = createMockUser(account);
-        setUser(mockUser);
+    // 初始化时检查现有的认证状态
+    const initAuth = async () => {
+      setIsLoading(true);
+      try {
+        // 检查本地存储中的用户信息
+        const savedUser = getCurrentUser();
+        const token = localStorage.getItem('auth_token');
+        
+        if (savedUser && token && isAuthenticated()) {
+          // 验证 token 是否仍然有效
+          try {
+            const response = await authApi.getProfile();
+            if (response.success && response.data) {
+              setUser(response.data.user);
+            } else {
+              // Token 无效，清除本地数据
+              clearAuthData();
+              setUser(null);
+            }
+          } catch (error) {
+            // API 调用失败，可能是网络问题或 token 过期
+            console.warn('获取用户信息失败，使用本地缓存:', error);
+            setUser(savedUser);
+          }
+        } else {
+          // 没有有效的认证信息
+          setUser(null);
+        }
+      } catch (error) {
+        console.error('初始化认证状态失败:', error);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
       }
-    } else {
-      // Auto-login with a default student account for demonstration
-      const defaultAccount = testAccounts.find(acc => acc.role === 'student');
-      if (defaultAccount) {
-        const mockUser = createMockUser(defaultAccount);
-        setUser(mockUser);
-        localStorage.setItem('auth_token', 'demo_token');
-        localStorage.setItem('saved_role', defaultAccount.role);
-      }
-    }
-    setIsLoading(false);
+    };
+
+    initAuth();
   }, []);
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // 使用真实的 API 进行登录
+      const response = await authApi.login({
+        username: email, // 后端可能使用 username 字段
+        password: password
+      });
+
+      if (response.success && response.data) {
+        // 保存认证信息
+        saveAuthData(response.data.token, response.data.user);
+        setUser(response.data.user);
+        
+        // 登录成功后跳转到 dashboard
+        router.navigate({ to: '/dashboard' });
+      } else {
+        throw new Error(response.message || '登录失败');
+      }
+    } catch (error) {
+      // 如果真实 API 失败，回退到 Mock 登录逻辑
+      console.warn('真实 API 登录失败，使用 Mock 登录:', error);
       
       // Check if credentials match any test account
       const account = testAccounts.find(
@@ -164,29 +186,41 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Create mock user based on the matching account
       const mockUser = createMockUser(account);
       
-      // Save session
-      localStorage.setItem('auth_token', 'mock_jwt_token_' + account.role);
-      localStorage.setItem('saved_role', account.role);
-      
+      // Save session using our API layer
+      const mockToken = 'mock_jwt_token_' + account.role + '_' + Date.now();
+      saveAuthData(mockToken, mockUser);
       setUser(mockUser);
-    } catch (error) {
-      throw error;
+      
+      // 登录成功后跳转到 dashboard
+      router.navigate({ to: '/dashboard' });
     } finally {
       setIsLoading(false);
     }
   };
 
   const logout = () => {
+    // 清除认证数据（包括新的 API 层认证信息）
+    clearAuthData();
+    
+    // 清除本地状态
     localStorage.removeItem('auth_token');
     localStorage.removeItem('saved_role');
     setUser(null);
+    
+    // 跳转到登录页面
+    router.navigate({ to: '/login' });
   };
 
   const switchRole = (role: UserRole) => {
     if (user && user.availableRoles.includes(role)) {
       const updatedUser = { ...user, currentRole: role };
       setUser(updatedUser);
-      localStorage.setItem('saved_role', role);
+      
+      // 保存更新的用户信息到本地存储
+      const token = localStorage.getItem('auth_token');
+      if (token) {
+        saveAuthData(token, updatedUser);
+      }
     }
   };
 

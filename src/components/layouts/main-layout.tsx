@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from '@tanstack/react-router';
 import { useAuth } from '@/hooks/useAuth';
 import { PermissionProvider } from '@/contexts/PermissionContext';
 import { RoleSidebar } from '@/components/role-sidebar';
@@ -11,10 +12,18 @@ interface MainLayoutProps {
 }
 
 export function MainLayout({ children, title, showSearch = true }: MainLayoutProps) {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const router = useRouter();
 
-  if (!user) {
+  useEffect(() => {
+    // 如果用户未登录，重定向到登录页
+    if (!isAuthenticated) {
+      router.navigate({ to: '/login' });
+    }
+  }, [isAuthenticated, router]);
+
+  if (!user || !isAuthenticated) {
     return null;
   }
 

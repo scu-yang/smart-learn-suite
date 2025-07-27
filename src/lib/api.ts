@@ -15,6 +15,11 @@ import type {
   NotificationFilter,
   NotificationStats
 } from '@/types';
+import { API_CONFIG } from '@/config/api';
+import { httpClient } from '@/lib/http-client';
+
+// 导出认证相关 API
+export * from '@/lib/auth-api';
 
 // 模拟延迟
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -280,8 +285,8 @@ const mockNotifications: Notification[] = [
   }
 ];
 
-// API 函数
-export const api = {
+// Mock API 实现
+const mockDataApi = {
   // 获取考试列表
   getExams: async (): Promise<Exam[]> => {
     await delay(500);
@@ -846,3 +851,28 @@ export const api = {
     console.log(`批量删除 ${notificationIds.length} 个通知`);
   },
 };
+
+// 真实 API 实现 (待后端 API 就绪后实现)
+const realDataApi = {
+  // TODO: 实现真实的 API 调用
+  // 这里可以使用 httpClient 调用后端接口
+  
+  // 获取考试列表
+  getExamsFromAPI: async (): Promise<Exam[]> => {
+    const response = await httpClient.get<Exam[]>('/exams');
+    return response.data || [];
+  },
+
+  // 获取课程列表
+  getCoursesFromAPI: async (): Promise<Course[]> => {
+    const response = await httpClient.get<Course[]>('/courses');
+    return response.data || [];
+  },
+
+  // ... 其他方法类似实现
+  // 为了简化，这里暂时使用 mock 实现
+  ...mockDataApi
+};
+
+// 根据配置选择使用 Mock 还是真实 API
+export const api = API_CONFIG.USE_MOCK ? mockDataApi : realDataApi;
