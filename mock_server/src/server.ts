@@ -28,8 +28,11 @@ const PORT = process.env.PORT || 8080;
 
 // 中间件配置
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'], // Vite 开发服务器
-  credentials: true
+  origin: true, // 允许所有源，在生产环境中应该配置具体的域名
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Content-Length', 'X-Kuma-Revision']
 }));
 
 app.use(express.json());
