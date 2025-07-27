@@ -133,6 +133,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const mockUser = createMockUser(account);
         setUser(mockUser);
       }
+    } else {
+      // Auto-login with a default student account for demonstration
+      const defaultAccount = testAccounts.find(acc => acc.role === 'student');
+      if (defaultAccount) {
+        const mockUser = createMockUser(defaultAccount);
+        setUser(mockUser);
+        localStorage.setItem('auth_token', 'demo_token');
+        localStorage.setItem('saved_role', defaultAccount.role);
+      }
     }
     setIsLoading(false);
   }, []);
