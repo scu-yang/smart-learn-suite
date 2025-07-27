@@ -1,4 +1,5 @@
 import { API_CONFIG, getApiUrl } from '@/config/api';
+import { showToast } from '@/lib/toast';
 
 // API 响应类型
 export interface ApiResponse<T = any> {
@@ -92,8 +93,16 @@ class HttpClient {
 
       // 检查 HTTP 状态
       if (!response.ok) {
+        const errorMessage = responseData.message || `HTTP ${response.status}: ${response.statusText}`;
+        
+        // 显示错误提示
+        showToast.error({ 
+          title: "请求失败",
+          description: errorMessage 
+        });
+        
         throw new ApiError(
-          responseData.message || `HTTP ${response.status}: ${response.statusText}`,
+          errorMessage,
           response.status,
           responseData.code?.toString()
         );
@@ -102,17 +111,32 @@ class HttpClient {
       return responseData;
     } catch (error) {
       if (error instanceof ApiError) {
+        // 如果是 ApiError，已经显示过 toast，直接抛出
         throw error;
       }
 
+      let errorMessage = 'Unknown error occurred';
+      let errorCode = 'UNKNOWN_ERROR';
+      let status = 0;
+
       if (error instanceof Error) {
         if (error.name === 'AbortError') {
-          throw new ApiError('Request timeout', 408, 'TIMEOUT');
+          errorMessage = '请求超时，请重试';
+          errorCode = 'TIMEOUT';
+          status = 408;
+        } else {
+          errorMessage = `网络错误: ${error.message}`;
+          errorCode = 'NETWORK_ERROR';
         }
-        throw new ApiError(`Network error: ${error.message}`, 0, 'NETWORK_ERROR');
       }
 
-      throw new ApiError('Unknown error occurred', 0, 'UNKNOWN_ERROR');
+      // 显示错误提示
+      showToast.error({ 
+        title: "网络错误",
+        description: errorMessage 
+      });
+
+      throw new ApiError(errorMessage, status, errorCode);
     }
   }
 
