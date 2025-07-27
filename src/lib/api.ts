@@ -248,7 +248,7 @@ const mockNotifications: Notification[] = [
 感谢您的理解与配合！
 
 ---
-**川大在线考试系统运维团队**`,
+**智慧教学系统运维团队**`,
     priority: "medium",
     isRead: true,
     readAt: "2025-07-16T18:30:00Z",

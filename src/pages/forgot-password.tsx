@@ -188,7 +188,7 @@ export function ForgotPasswordPage() {
               <GraduationCap className="w-7 h-7 text-white" />
             </div>
             <div className="ml-0">
-              <span className="block text-2xl font-bold text-gray-900">川大在线考试</span>
+              <span className="block text-2xl font-bold text-gray-900">智慧教学系统</span>
               <div className="inline-flex items-center px-3 py-1 bg-blue-50 rounded-full text-blue-700 text-xs font-medium mt-2">
                 找回密码
               </div>

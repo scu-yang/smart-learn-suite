@@ -89,7 +89,7 @@ export function HomePage() {
               <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                 <GraduationCap className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900">川大在线考试</span>
+              <span className="text-xl font-bold text-gray-900">智慧教学系统</span>
               <div className="hidden sm:flex items-center px-3 py-1 bg-blue-50 rounded-full text-blue-700 text-xs font-medium ml-3">
                 <Sparkles className="w-3 h-3 mr-1" />
                 AI 驱动
@@ -619,7 +619,7 @@ export function HomePage() {
                 <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
                   <GraduationCap className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-2xl font-bold">川大在线考试</span>
+                <span className="text-2xl font-bold">智慧教学系统</span>
               </div>
               <p className="text-gray-400 leading-relaxed">
                 专业的在线考试平台，致力于为教育机构提供智能化的考试解决方案。
@@ -657,7 +657,7 @@ export function HomePage() {
           </div>
           
           <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 川大在线考试平台. 保留所有权利.</p>
+            <p>&copy; 2024 智慧教学系统. 保留所有权利.</p>
           </div>
         </div>
       </footer>

@@ -1,4 +1,4 @@
-# 川大在线考试系统
+# 智慧教学系统
 
 一个基于 React + TypeScript + TanStack Router + TanStack Query + Tailwind CSS 构建的现代化在线考试平台。
 
