@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { GraduationCap, Eye, EyeOff, ArrowRight, Sparkles, XCircle } from "lucide-react";
 import { Link, useRouter } from "@tanstack/react-router";
+import { useAuth } from "@/hooks/useAuth";
 import type { LoginForm } from "@/types";
 
 export function LoginPage() {
@@ -15,12 +16,18 @@ export function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [errors, setErrors] = useState<Partial<LoginForm>>({});
+  const [loginError, setLoginError] = useState<string>("");
   
   const router = useRouter();
+  const { login, isAuthenticated } = useAuth();
 
   useEffect(() => {
     setIsLoaded(true);
-  }, []);
+    // 如果已经登录，直接跳转到dashboard
+    if (isAuthenticated) {
+      router.navigate({ to: "/dashboard" });
+    }
+  }, [isAuthenticated, router]);
 
   const validateForm = (): boolean => {
     const newErrors: Partial<LoginForm> = {};
@@ -45,17 +52,17 @@ export function LoginPage() {
     }
 
     setIsLoading(true);
+    setLoginError("");
     
-    // 模拟登录请求
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      // 这里应该调用实际的登录 API
-      console.log("登录数据:", formData);
+      // 使用真正的认证系统登录
+      await login(formData.username, formData.password);
       
       // 登录成功后跳转到 dashboard
       router.navigate({ to: "/dashboard" });
     } catch (error) {
       console.error("登录失败:", error);
+      setLoginError(error instanceof Error ? error.message : "登录失败，请重试");
     } finally {
       setIsLoading(false);
     }
@@ -169,6 +176,13 @@ export function LoginPage() {
                   </Link>
                 </div>
               </div>
+
+              {loginError && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-center animate-in slide-in-from-top-1">
+                  <XCircle className="h-5 w-5 text-red-500 mr-2 flex-shrink-0" />
+                  <span className="text-sm text-red-700">{loginError}</span>
+                </div>
+              )}
 
               <Button 
                 type="submit" 

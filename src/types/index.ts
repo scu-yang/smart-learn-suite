@@ -1,10 +1,16 @@
+export type UserRole = 'student' | 'teacher' | 'ta' | 'admin' | 'school_admin';
+
 export interface User {
   id: string;
   username: string;
+  name?: string;
   email: string;
   avatar?: string;
-  role: 'student' | 'teacher' | 'admin'; // 添加角色字段
+  primaryRole: UserRole;
+  availableRoles: UserRole[];
+  currentRole: UserRole;
   department?: string; // 院系
+  school?: string; // 学校
   createdAt: string;
 }
 

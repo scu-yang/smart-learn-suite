@@ -8,6 +8,7 @@ import { ExamPrepPage } from '@/pages/exam-prep';
 import { ExamPage } from '@/pages/exam';
 import { ExamResultPage } from '@/pages/exam-result';
 import { CourseDetailPage } from '@/pages/course-detail';
+import { CoursesPage } from '@/pages/courses';
 import { NotificationsPage } from '@/pages/notifications';
 import { AnnouncementDetailPage } from '@/pages/announcement-detail';
 import { AdminPortalPage } from '@/pages/admin-portal';
@@ -15,6 +16,7 @@ import { QuestionBankPage } from '@/pages/admin/question-bank-standalone';
 import { QuestionEditorPage } from '@/pages/admin/question-editor';
 import { DashboardTestPage } from '@/pages/dashboard-test';
 import { ProfilePage } from '@/pages/profile';
+import { RoleDashboardTestPage } from '@/pages/role-dashboard-test';
 
 // 根路由
 const rootRoute = createRootRoute({
@@ -96,6 +98,13 @@ const courseDetailRoute = createRoute({
   },
 });
 
+// 课程列表页路由
+const coursesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/courses',
+  component: CoursesPage,
+});
+
 // 通知中心路由
 const notificationsRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -148,6 +157,13 @@ const questionEditorRoute = createRoute({
   component: QuestionEditorPage,
 });
 
+// 角色Dashboard测试路由
+const roleDashboardTestRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/role-dashboard-test',
+  component: RoleDashboardTestPage,
+});
+
 // 创建路由树
 const routeTree = rootRoute.addChildren([
   indexRoute,
@@ -159,12 +175,14 @@ const routeTree = rootRoute.addChildren([
   examRoute,
   examResultRoute,
   courseDetailRoute,
+  coursesRoute,
   notificationsRoute,
   announcementDetailRoute,
   adminPortalRoute,
   adminQuestionBankRoute,
   questionEditorRoute,
   dashboardTestRoute,
+  roleDashboardTestRoute,
   profileRoute,
 ]);
 
