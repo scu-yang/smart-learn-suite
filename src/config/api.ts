@@ -17,7 +17,7 @@ export const API_CONFIG = {
       PROFILE: '/auth/profile',
     },
     COURSE: {
-      GET: '/course',
+      GET: '/course/list',
     },
     HEALTH: '/auth/health',
   },
