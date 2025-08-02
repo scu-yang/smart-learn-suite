@@ -4,18 +4,19 @@ export const API_CONFIG = {
   USE_MOCK: import.meta.env.VITE_USE_MOCK === 'false' ? false : true,
   
   // 后端 API 基础 URL
-  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8080/api',
+  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8081/v1',
   
   // API 端点
   ENDPOINTS: {
     AUTH: {
-      LOGIN: '/auth/login',
+      LOGIN: '/auth/login-in',
+      LOGIN_OUT: '/auth/login-out',
       REGISTER: '/auth/register',
     },
     USER: {
-      PROFILE: '/user/profile',
+      PROFILE: '/auth/profile',
     },
-    HEALTH: '/health',
+    HEALTH: '/auth/health',
   },
   
   // 请求超时时间（毫秒）
@@ -28,4 +29,13 @@ export const API_CONFIG = {
 // 获取完整的 API URL
 export const getApiUrl = (endpoint: string): string => {
   return `${API_CONFIG.BASE_URL}${endpoint}`;
+};
+
+export const LOCAL_STORAGE_KEYS = {
+  AUTH_TOKEN: 'x_token',
+  USER_DATA: 'user_data'
+};
+
+export const HTTP_HEADERS = {
+  AUTH_TOKEN: 'x-token',
 };

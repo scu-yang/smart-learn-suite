@@ -210,7 +210,7 @@ app.post('/api/auth/register', authLimiter, (req, res) => {
     const { password: _, ...userWithoutPassword } = newUser;
     
     const response: RegisterResponse = {
-      code: 201,
+      code: 200,
       message: '注册成功',
       data: {
         user: userWithoutPassword

@@ -6,6 +6,8 @@
 
 import { authApi, api, saveAuthData, clearAuthData, isAuthenticated } from '@/lib/api';
 import type { LoginForm, RegisterForm } from '@/types';
+import { isSuccess } from './http-client';
+import { toUser } from './model';
 
 // 1. 认证相关示例
 export const authExamples = {
@@ -13,16 +15,17 @@ export const authExamples = {
   async login() {
     try {
       const credentials: LoginForm = {
-        username: 'student',
+        email: 'student@scu.edu.cn',
         password: 'student123'
       };
 
       const response = await authApi.login(credentials);
-      if (response.success && response.data) {
+      if (isSuccess(response) && response.data) {
         // 保存认证信息
-        saveAuthData(response.data.token, response.data.user);
-        console.log('登录成功:', response.data.user);
-        return response.data.user;
+        const user = toUser(response.data);
+        saveAuthData(response.data.token, user);
+        console.log('登录成功:', user);
+        return user;
       }
     } catch (error) {
       console.error('登录失败:', error);

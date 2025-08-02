@@ -3,6 +3,8 @@ import { useRouter } from '@tanstack/react-router';
 import { authApi, saveAuthData, clearAuthData, getCurrentUser, isAuthenticated } from '@/lib/api';
 import type { ReactNode } from 'react';
 import type { User, UserRole } from '@/types';
+import { isSuccess } from '@/lib/http-client';
+import { toUser } from '@/lib/model';
 
 interface AuthContextType {
   user: User | null;
@@ -42,35 +44,35 @@ export const testAccounts: TestAccount[] = [
   {
     email: 'teacher@scu.edu.cn',
     password: 'teacher123',
-    role: 'teacher',
+    role: 'Teacher',
     name: '张教授',
     description: '教师账号 - 可管理课程、题库、批改作业'
   },
   {
     email: 'student@scu.edu.cn', 
     password: 'student123',
-    role: 'student',
+    role: 'Student',
     name: '李同学',
     description: '学生账号 - 可学习课程、参加考试、查看成绩'
   },
   {
     email: 'ta@scu.edu.cn',
     password: 'ta123', 
-    role: 'ta',
+    role: 'Ta',
     name: '王助教',
     description: '助教账号 - 协助教学、批改作业、管理学生'
   },
   {
     email: 'admin@scu.edu.cn',
     password: 'admin123',
-    role: 'admin', 
+    role: 'Admin', 
     name: '系统管理员',
     description: '系统管理员 - 管理用户、监控系统、配置权限'
   },
   {
     email: 'school@scu.edu.cn',
     password: 'school123',
-    role: 'school_admin',
+    role: 'SchoolAdmin',
     name: '学校管理员', 
     description: '学校管理员 - 管理校级数据、生成报表'
   }
@@ -84,7 +86,7 @@ const createMockUser = (account: TestAccount): User => {
     name: account.name,
     email: account.email,
     school: '四川大学',
-    department: account.role === 'teacher' ? '数学学院' : account.role === 'student' ? '计算机学院' : '管理学院',
+    department: account.role === 'Teacher' ? '数学学院' : account.role === 'Student' ? '计算机学院' : '管理学院',
     avatar: `https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face`,
     primaryRole: account.role,
     currentRole: account.role,
@@ -118,16 +120,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         // 检查本地存储中的用户信息
         const savedUser = getCurrentUser();
-        const token = localStorage.getItem('auth_token');
+        const token = localStorage.getItem('x_token');
         
         if (savedUser && token && isAuthenticated()) {
           // 验证 token 是否仍然有效
           try {
             const response = await authApi.getProfile();
-            if (response.success && response.data) {
-              setUser(response.data.user);
+            if (isSuccess(response) && response.data) {
+              const user = toUser(response.data);
+              setUser(user);
             } else {
-              // Token 无效，清除本地数据
+              console.warn('Token 无效，清除本地数据');
               clearAuthData();
               setUser(null);
             }
@@ -154,45 +157,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // 使用真实的 API 进行登录
       const response = await authApi.login({
-        username: email, // 后端可能使用 username 字段
+        email: email, 
         password: password
       });
-
-      if (response.success && response.data) {
+      console.log('登录请求:', { email, password });
+      if(isSuccess(response) && response.data) {
+        const user = toUser(response.data);
         // 保存认证信息
-        saveAuthData(response.data.token, response.data.user);
-        setUser(response.data.user);
-        
+        saveAuthData(response.data.token, user);
+        setUser(user);
+
         // 登录成功后跳转到 dashboard
         router.navigate({ to: '/dashboard' });
       } else {
         throw new Error(response.message || '登录失败');
       }
     } catch (error) {
-      // 如果真实 API 失败，回退到 Mock 登录逻辑
-      console.warn('真实 API 登录失败，使用 Mock 登录:', error);
-      
-      // Check if credentials match any test account
-      const account = testAccounts.find(
-        acc => acc.email === email && acc.password === password
-      );
-      
-      if (!account) {
-        throw new Error('用户名或密码错误');
-      }
-
-      // Create mock user based on the matching account
-      const mockUser = createMockUser(account);
-      
-      // Save session using our API layer
-      const mockToken = 'mock_jwt_token_' + account.role + '_' + Date.now();
-      saveAuthData(mockToken, mockUser);
-      setUser(mockUser);
-      
-      // 登录成功后跳转到 dashboard
-      router.navigate({ to: '/dashboard' });
+      console.error('登录失败:', error);
     } finally {
       setIsLoading(false);
     }
@@ -234,6 +216,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isLoading,
     testAccounts
   };
+  console.log('AuthContext value:', value);
+
 
   return (
     <AuthContext.Provider value={value}>

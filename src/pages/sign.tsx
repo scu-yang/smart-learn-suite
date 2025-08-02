@@ -4,6 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { GraduationCap, Eye, EyeOff, CheckCircle, XCircle, ArrowRight, Sparkles } from "lucide-react";
 import { Link, useRouter } from "@tanstack/react-router";
+import { authApi } from "@/lib/auth-api";
+import { showToast } from "@/lib/toast";
 import type { RegisterForm } from "@/types";
 
 export function SignPage() {
@@ -58,14 +60,37 @@ export function SignPage() {
     setIsLoading(true);
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      // 这里应该调用实际的注册 API
-      console.log("注册数据:", formData);
+      // 调用注册 API（默认注册为学生用户）
+      const response = await authApi.register({
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword
+      });
+      console.log("注册响应:", response);
       
-      // 注册成功后跳转到登录页
-      router.navigate({ to: "/login" });
+      // code == 200
+      if (response.code === 200) {
+        // 注册成功，显示成功提示
+        showToast.success({
+          title: "注册成功",
+          description: "账号创建成功，即将跳转到登录页面"
+        });
+        
+        // 等待一下让用户看到成功提示，然后跳转到登录页
+        setTimeout(() => {
+          router.navigate({ to: "/login" });
+        }, 1500);
+      }
     } catch (error) {
       console.error("注册失败:", error);
+      
+      // 显示错误提示
+      const errorMessage = error instanceof Error ? error.message : "注册失败，请稍后重试";
+      showToast.error({
+        title: "注册失败",
+        description: errorMessage
+      });
     } finally {
       setIsLoading(false);
     }

@@ -177,41 +177,6 @@ export function NotificationsPage() {
         <div className="absolute top-1/2 left-3/4 w-72 h-72 bg-purple-200/20 rounded-full mix-blend-multiply filter blur-xl opacity-40 animate-pulse" style={{animationDelay: '4s'}}></div>
       </div>
 
-      {/* Header */}
-      <header className="relative z-10 bg-white/80 backdrop-blur-lg shadow-xl border-0">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <Link 
-                to="/dashboard" 
-                className="flex items-center text-gray-600 hover:text-blue-600 mr-6 transition-colors duration-200 hover:bg-blue-50 px-3 py-2 rounded-lg"
-              >
-                <ArrowLeft className="h-5 w-5 mr-2" />
-                返回主页
-              </Link>
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                  <Bell className="h-4 w-4 text-white" />
-                </div>
-                <h1 className="text-xl font-semibold text-gray-900">通知中心</h1>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              {unreadNotifications.length > 0 && (
-                <Button 
-                  onClick={handleMarkAllAsRead} 
-                  size="sm"
-                  className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
-                >
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  全部已读
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-      </header>
-
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* 侧边栏 - 统计和筛选 */}

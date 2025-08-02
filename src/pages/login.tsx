@@ -9,7 +9,7 @@ import type { LoginForm } from "@/types";
 
 export function LoginPage() {
   const [formData, setFormData] = useState<LoginForm>({
-    username: "",
+    email: "",
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -24,6 +24,7 @@ export function LoginPage() {
   useEffect(() => {
     setIsLoaded(true);
     // 如果已经登录，直接跳转到dashboard
+    console.log("isAuthenticated:", isAuthenticated);
     if (isAuthenticated) {
       router.navigate({ to: "/dashboard" });
     }
@@ -32,8 +33,8 @@ export function LoginPage() {
   const validateForm = (): boolean => {
     const newErrors: Partial<LoginForm> = {};
 
-    if (!formData.username.trim()) {
-      newErrors.username = "请输入用户名";
+    if (!formData.email.trim()) {
+      newErrors.email = "请输入用户名";
     }
 
     if (!formData.password) {
@@ -56,7 +57,7 @@ export function LoginPage() {
     
     try {
       // 使用真正的认证系统登录
-      await login(formData.username, formData.password);
+      await login(formData.email, formData.password);
       
       // 登录成功后跳转到 dashboard
       router.navigate({ to: "/dashboard" });
@@ -94,7 +95,7 @@ export function LoginPage() {
               <GraduationCap className="w-7 h-7 text-white" />
             </div>
             <div className="ml-0">
-              <span className="block text-2xl font-bold text-gray-900">智慧教学系统</span>
+              <span className="block text-2xl font-bold text-gray-900">川大在线考试</span>
               <div className="inline-flex items-center px-3 py-1 bg-blue-50 rounded-full text-blue-700 text-xs font-medium mt-2">
                 <Sparkles className="w-3 h-3 mr-1" />
                 AI 驱动的智能教育平台
@@ -113,23 +114,23 @@ export function LoginPage() {
           <CardContent className="px-8 pb-8">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <label htmlFor="username" className="text-sm font-semibold text-gray-700">
+                <label htmlFor="email" className="text-sm font-semibold text-gray-700">
                   用户名
                 </label>
                 <Input
-                  id="username"
-                  name="username"
+                  id="email"
+                  name="email"
                   type="text"
                   placeholder="请输入用户名"
-                  value={formData.username}
+                  value={formData.email}
                   onChange={handleInputChange}
-                  className={`h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500 ${errors.username ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
+                  className={`h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500 ${errors.email ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
                   required
                 />
-                {errors.username && (
+                {errors.email && (
                   <p className="text-sm text-red-500 flex items-center animate-in slide-in-from-left-1">
                     <XCircle className="h-4 w-4 mr-1" />
-                    {errors.username}
+                    {errors.email}
                   </p>
                 )}
               </div>

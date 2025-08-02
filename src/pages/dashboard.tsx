@@ -11,6 +11,8 @@ import {
   AdminDashboard, 
   SchoolAdminDashboard 
 } from "@/components/role-dashboards";
+import type { User, UserRole } from "@/types";
+
 
 function DashboardContent() {
   const { user } = useAuth();
@@ -20,15 +22,15 @@ function DashboardContent() {
   // 根据用户角色显示不同的仪表盘
   const renderDashboard = () => {
     switch (user.currentRole) {
-      case 'student':
+      case "Student":
         return <StudentDashboard />;
-      case 'teacher':
+      case 'Teacher':
         return <TeacherDashboard />;
-      case 'ta':
+      case 'Ta':
         return <TADashboard />;
-      case 'admin':
+      case 'Admin':
         return <AdminDashboard />;
-      case 'school_admin':
+      case 'SchoolAdmin':
         return <SchoolAdminDashboard />;
       default:
         return <StudentDashboard />;

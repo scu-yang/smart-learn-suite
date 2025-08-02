@@ -1,12 +1,17 @@
-import { API_CONFIG, getApiUrl } from '@/config/api';
+import { API_CONFIG, getApiUrl, HTTP_HEADERS, LOCAL_STORAGE_KEYS } from '@/config/api';
 import { showToast } from '@/lib/toast';
 
+export const SUCCESS_CODE = '20000';
+
+export function isSuccess<T>(resp: ApiResponse<T>): boolean {
+  console.log(resp.code, SUCCESS_CODE);
+  return resp.code === SUCCESS_CODE;
+}
 // API 响应类型
 export interface ApiResponse<T = any> {
-  success: boolean;
   data?: T;
   message?: string;
-  code?: number;
+  code?: string;
 }
 
 // API 错误类型
@@ -52,9 +57,9 @@ class HttpClient {
     }
 
     // 从本地存储获取 token
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem(LOCAL_STORAGE_KEYS.AUTH_TOKEN);
     if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+      headers[HTTP_HEADERS.AUTH_TOKEN] = `${token}`;
     }
 
     // 创建请求配置
@@ -85,11 +90,12 @@ class HttpClient {
         // 非 JSON 响应，包装成标准格式
         const text = await response.text();
         responseData = {
-          success: response.ok,
+          code: 2000,
           data: text as T,
           message: response.ok ? 'Success' : 'Request failed',
         };
       }
+      console.log('API Response:', responseData);
 
       // 检查 HTTP 状态
       if (!response.ok) {
@@ -108,6 +114,19 @@ class HttpClient {
         );
       }
 
+      // 检查业务状态码
+      if (!isSuccess(responseData)) {
+        const errorMessage = responseData.message || '业务错误';
+        showToast.error({
+          title: "",
+          description: errorMessage
+        });
+        throw new ApiError(
+          errorMessage,
+          response.status,
+          responseData.code?.toString()
+        );
+      }
       return responseData;
     } catch (error) {
       if (error instanceof ApiError) {

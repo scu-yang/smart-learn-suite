@@ -1,7 +1,8 @@
-export type UserRole = 'student' | 'teacher' | 'ta' | 'admin' | 'school_admin';
+export type UserRole = 'Student' | 'Teacher' | 'Ta' | 'SchoolAdmin' | 'Admin';
+
 
 export interface User {
-  id: string;
+  uid: number;
   username: string;
   name?: string;
   email: string;
@@ -11,11 +12,10 @@ export interface User {
   currentRole: UserRole;
   department?: string; // 院系
   school?: string; // 学校
-  createdAt: string;
 }
 
 export interface LoginForm {
-  username: string;
+  email: string;
   password: string;
 }
 
