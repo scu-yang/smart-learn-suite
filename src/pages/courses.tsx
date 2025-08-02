@@ -10,7 +10,6 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { 
-  Search, 
   Plus, 
   BookOpen, 
   Users, 
@@ -119,19 +118,8 @@ const coursesData = [
 ];
 
 export function CoursesPage() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState('全部');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const { user } = useAuth();
-
-  const filteredCourses = coursesData.filter(course => {
-    const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         course.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         course.teacher.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = filterType === '全部' || course.type === filterType;
-    return matchesSearch && matchesType;
-  });
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case '进行中': return 'bg-green-100 text-green-800';
@@ -142,12 +130,11 @@ export function CoursesPage() {
   };
 
   // 根据用户角色显示不同的界面
-  const isTeacher = user?.role === 'teacher' || user?.role === 'admin';
+  const isTeacher = user?.currentRole === 'Teacher' || user?.currentRole === 'Admin';
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* 页面头部 */}
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center">
@@ -155,7 +142,7 @@ export function CoursesPage() {
               {isTeacher ? '我的课程' : '课程中心'}
             </h1>
             <p className="text-gray-600 mt-1">
-              {isTeacher ? '管理您的所有课程和班级' : '浏览和学习您感兴趣的课程'}
+              {isTeacher ? '管理您的所有课程和班级' : '查看学习进度和课程资料'}
             </p>
           </div>
           
@@ -207,39 +194,9 @@ export function CoursesPage() {
             </Dialog>
           )}
         </div>
-
-        {/* 搜索和筛选 */}
-        <Card className="mb-6">
-          <CardContent className="p-6">
-            <div className="flex gap-4 items-center">
-              <div className="relative flex-1 max-w-sm">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="搜索课程..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              
-              <Select value={filterType} onValueChange={setFilterType}>
-                <SelectTrigger className="w-32">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="全部">全部</SelectItem>
-                  <SelectItem value="必修课">必修课</SelectItem>
-                  <SelectItem value="选修课">选修课</SelectItem>
-                  <SelectItem value="专业课">专业课</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* 课程网格 */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCourses.map((course) => (
+          {coursesData.map((course) => (
             <Card key={course.id} className="group hover:shadow-lg transition-all duration-200 overflow-hidden">
               {/* 课程封面 */}
               <div className="relative h-48 overflow-hidden">
@@ -353,25 +310,6 @@ export function CoursesPage() {
             </Card>
           ))}
         </div>
-
-        {/* 空状态 */}
-        {filteredCourses.length === 0 && (
-          <Card>
-            <CardContent className="p-12 text-center">
-              <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">没有找到课程</h3>
-              <p className="text-gray-600 mb-4">
-                {searchTerm ? '尝试调整搜索条件' : isTeacher ? '开始创建您的第一门课程' : '暂无可用课程'}
-              </p>
-              {isTeacher && (
-                <Button onClick={() => setIsCreateDialogOpen(true)}>
-                  <Plus className="w-4 h-4 mr-2" />
-                  创建课程
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-        )}
       </div>
     </div>
   );
