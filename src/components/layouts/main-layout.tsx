@@ -48,7 +48,7 @@ export function MainLayout({ children, title, showSearch = true }: MainLayoutPro
           
           {/* 页面内容 */}
           <main className="flex-1 overflow-y-auto bg-gray-50">
-            <div className="container mx-auto px-6 py-6">
+            <div className="container m-0 px-6 py-6">
               {children}
             </div>
           </main>
