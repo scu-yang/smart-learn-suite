@@ -44,6 +44,7 @@ export const getStudentMenus = (): MenuSection[] => [
     title: '学习中心',
     items: [
       { id: 'dashboard', name: '学习概览', path: '/dashboard', icon: LayoutDashboard, description: '查看学习进度和任务' },
+      // pages/courses.tsx
       { id: 'courses', name: '我的课程', path: '/courses', icon: BookOpen, description: '课程学习和资料' },
       { id: 'practice', name: '练习中心', path: '/practice', icon: Target, description: '自主练习训练' },
       { id: 'exams', name: '考试中心', path: '/exams', icon: FileText, description: '参加考试和测验' },
@@ -232,12 +233,12 @@ export function getMenusByRole(role: UserRole): MenuSection[] {
 // 角色显示名称
 export function getRoleDisplayName(role: UserRole): string {
   switch (role) {
-    case 'student': return '学生';
-    case 'teacher': return '教师';
-    case 'ta': return '助教';
-    case 'admin': return '系统管理员';
-    case 'school_admin': return '学校管理员';
-    default: return '用户';
+    case 'student': return '智慧教学系统';
+    case 'teacher': return '教师工作台';
+    case 'ta': return '助教工作台';
+    case 'admin': return '系统管理员工作台';
+    case 'school_admin': return '学校管理员工作台';
+    default: return '智慧教学系统';
   }
 }
 

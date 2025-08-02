@@ -11,7 +11,6 @@ import {
   AdminDashboard, 
   SchoolAdminDashboard 
 } from "@/components/role-dashboards";
-import type { User, UserRole } from "@/types";
 
 
 function DashboardContent() {
@@ -62,7 +61,7 @@ function DashboardContent() {
               
               <div className="flex items-center gap-4">
                 {/* 管理中心入口 */}
-                {(user.currentRole === 'admin' || user.currentRole === 'teacher') && (
+                {(user.currentRole === 'Admin' || user.currentRole === 'Teacher') && (
                   <Link to="/admin">
                     <Button variant="outline" size="sm">
                       管理中心
@@ -74,7 +73,7 @@ function DashboardContent() {
                 <Link to="/profile">
                   <div className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors">
                     <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white font-medium">
-                      {user.name.charAt(0)}
+                      {user.username.charAt(0)}
                     </div>
                     <div className="hidden sm:block">
                       <p className="text-sm font-medium text-gray-900">{user.name}</p>

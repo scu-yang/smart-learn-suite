@@ -169,6 +169,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('saved_role');
     setUser(null);
     // 用户状态会自动触发重新渲染，显示登录页面
+    console.log('已登出');
   };
 
   const switchRole = (role: UserRole) => {

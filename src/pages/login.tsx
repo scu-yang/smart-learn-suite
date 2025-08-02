@@ -9,8 +9,8 @@ import type { LoginForm } from "@/types";
 
 export function LoginPage() {
   const [formData, setFormData] = useState<LoginForm>({
-    email: "",
-    password: "",
+    email: "student@scu.edu.cn",
+    password: "student123",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +23,6 @@ export function LoginPage() {
 
   useEffect(() => {
     setIsLoaded(true);
-    // 如果已经登录，直接跳转到dashboard
     console.log("isAuthenticated:", isAuthenticated);
     if (isAuthenticated) {
       router.navigate({ to: "/dashboard" });

@@ -99,7 +99,7 @@ export function RoleSidebar({
                 </h2>
                 <p className="text-xs text-gray-500 flex items-center gap-1">
                   {getRoleDescription(user.currentRole)}
-                  {user.currentRole === 'ta' && (
+                  {user.currentRole === 'Ta' && (
                     <Shield className="w-3 h-3 text-blue-500" />
                   )}
                 </p>
@@ -132,7 +132,7 @@ export function RoleSidebar({
               <div className="space-y-1">
                 {section.items.map((item: MenuItem) => {
                   // 对于需要权限检查的菜单项，使用ModuleGuard包装
-                  if (item.id === 'questions' && user.currentRole === 'ta') {
+                  if (item.id === 'questions' && user.currentRole === 'Ta') {
                     return (
                       <ModuleGuard key={item.id} module="questionBank">
                         {renderMenuItem(item)}
@@ -140,7 +140,7 @@ export function RoleSidebar({
                     );
                   }
                   
-                  if (item.id === 'courses' && user.currentRole === 'ta') {
+                  if (item.id === 'courses' && user.currentRole === 'Ta') {
                     return (
                       <ModuleGuard key={item.id} module="courses">
                         {renderMenuItem(item)}
