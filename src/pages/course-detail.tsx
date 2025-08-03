@@ -583,8 +583,8 @@ export function CourseDetailPage({ courseId }: CourseDetailPageProps) {
   return (
     <div className="flex h-full bg-background">
       {/* Course Sidebar */}
-      <div className="w-80 border-r bg-card overflow-y-auto">
-        <div className="p-4 border-b">
+      <div className="w-64 border-r bg-card overflow-y-auto">
+        <div>
           <Button
             variant="ghost"
             size="sm"
@@ -594,17 +594,17 @@ export function CourseDetailPage({ courseId }: CourseDetailPageProps) {
             <ArrowLeft className="w-4 h-4" />
             返回课程列表
           </Button>
-          
-          <div className="text-center">
-            <h3 className="font-medium text-lg mb-2">{course.name}</h3>
-            <p className="text-sm text-muted-foreground mb-4">选择章节开始学习</p>
-          </div>
         </div>
 
         {/* Chapter Tree */}
         <div className="p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-medium">课程章节</h3>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="font-medium">课程章节</h3>
+              <p className="text-xs text-muted-foreground mt-1">
+                {stats.completedChapters + stats.completedKnowledge}/{stats.totalChapters + stats.totalKnowledge} 项已完成
+              </p>
+            </div>
             <Button 
               size="sm" 
               className="gap-2"
@@ -623,65 +623,6 @@ export function CourseDetailPage({ courseId }: CourseDetailPageProps) {
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto">
         <div className="p-6 space-y-6">
-          {/* Course Header */}
-          <div className="relative">
-            {/* Course Cover */}
-            <div className="relative h-48 rounded-lg overflow-hidden mb-6 bg-gradient-to-r from-blue-600 to-purple-600">
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-              <div className="absolute bottom-4 left-4 text-white">
-                <h1 className="text-3xl font-bold mb-2">{course.name}</h1>
-                <p className="text-lg opacity-90">{course.description}</p>
-              </div>
-              <div className="absolute top-4 right-4">
-                <div className="flex items-center gap-2 bg-black/20 backdrop-blur-sm rounded-lg px-3 py-2 text-white">
-                  <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                  <span>4.8</span>
-                  <span className="opacity-70">(45人)</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Progress Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card>
-              <CardContent className="p-4 text-center">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-                  <TrendingUp className="w-6 h-6 text-blue-600" />
-                </div>
-                <div className="text-2xl font-bold text-blue-600">{course.progress}%</div>
-                <p className="text-sm text-muted-foreground">学习进度</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-                  <Trophy className="w-6 h-6 text-green-600" />
-                </div>
-                <div className="text-2xl font-bold text-green-600">85</div>
-                <p className="text-sm text-muted-foreground">平均分</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-                  <Timer className="w-6 h-6 text-purple-600" />
-                </div>
-                <div className="text-2xl font-bold text-purple-600">48h</div>
-                <p className="text-sm text-muted-foreground">学习时长</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-                  <Target className="w-6 h-6 text-orange-600" />
-                </div>
-                <div className="text-2xl font-bold text-orange-600">5</div>
-                <p className="text-sm text-muted-foreground">天后截止</p>
-              </CardContent>
-            </Card>
-          </div>
-
           {/* Course Content Tabs */}
           <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)} className="space-y-4">
             <TabsList>
@@ -692,7 +633,66 @@ export function CourseDetailPage({ courseId }: CourseDetailPageProps) {
             </TabsList>
 
             <TabsContent value="overview" className="space-y-4">
-              {/* Course Information Card */}
+              {/* Course Header */}
+              <div className="relative">
+                {/* Course Cover */}
+                <div className="relative h-48 rounded-lg overflow-hidden mb-6 bg-gradient-to-r from-blue-600 to-purple-600">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <h1 className="text-3xl font-bold mb-2">{course.name}</h1>
+                    <p className="text-lg opacity-90">{course.description}</p>
+                  </div>
+                  <div className="absolute top-4 right-4">
+                    <div className="flex items-center gap-2 bg-black/20 backdrop-blur-sm rounded-lg px-3 py-2 text-white">
+                      <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                      <span>4.8</span>
+                      <span className="opacity-70">(45人)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Progress Overview */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                      <TrendingUp className="w-6 h-6 text-blue-600" />
+                    </div>
+                    <div className="text-2xl font-bold text-blue-600">{course.progress}%</div>
+                    <p className="text-sm text-muted-foreground">学习进度</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                      <Trophy className="w-6 h-6 text-green-600" />
+                    </div>
+                    <div className="text-2xl font-bold text-green-600">85</div>
+                    <p className="text-sm text-muted-foreground">平均分</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                      <Timer className="w-6 h-6 text-purple-600" />
+                    </div>
+                    <div className="text-2xl font-bold text-purple-600">48h</div>
+                    <p className="text-sm text-muted-foreground">学习时长</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                      <Target className="w-6 h-6 text-orange-600" />
+                    </div>
+                    <div className="text-2xl font-bold text-orange-600">5</div>
+                    <p className="text-sm text-muted-foreground">天后截止</p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Course Information */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -701,42 +701,43 @@ export function CourseDetailPage({ courseId }: CourseDetailPageProps) {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center">
-                      <BookOpen className="w-8 h-8 text-blue-600" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold mb-1">{course.name}</h3>
-                      <p className="text-muted-foreground mb-2">{course.description}</p>
-                      <div className="flex items-center gap-2">
-                        <Avatar className="w-6 h-6">
-                          <AvatarFallback className="text-xs">{course.teacher?.slice(0, 2) || 'T'}</AvatarFallback>
-                        </Avatar>
-                        <span className="text-sm text-muted-foreground">{course.teacher}</span>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <BookOpen className="w-6 h-6 text-blue-600" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-lg">{course.name}</h3>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Avatar className="w-6 h-6">
+                            <AvatarFallback className="text-xs">{course.teacher?.slice(0, 2) || 'T'}</AvatarFallback>
+                          </Avatar>
+                          <span className="text-sm text-muted-foreground">{course.teacher}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  
-                  <div className="space-y-3">
-                    <div className="flex justify-between text-sm">
-                      <span>总体进度</span>
-                      <span className="font-medium">{course.progress}%</span>
-                    </div>
-                    <Progress value={course.progress} className="h-2" />
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>{course.completedLessons}/{course.totalLessons} 课时</span>
-                      <span>课程进度</span>
-                    </div>
-                    
-                    <div className="pt-3 border-t">
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="text-center p-3 bg-blue-50 rounded-lg">
-                          <div className="text-lg font-semibold text-blue-600">{stats.completedChapters}/{stats.totalChapters}</div>
-                          <div className="text-sm text-muted-foreground">章节完成</div>
-                        </div>
-                        <div className="text-center p-3 bg-amber-50 rounded-lg">
-                          <div className="text-lg font-semibold text-amber-600">{stats.completedKnowledge}/{stats.totalKnowledge}</div>
-                          <div className="text-sm text-muted-foreground">知识点完成</div>
+
+                    <div className="space-y-3">
+                      <div className="flex justify-between text-sm">
+                        <span>总体进度</span>
+                        <span>{course.progress}%</span>
+                      </div>
+                      <Progress value={course.progress} className="h-2" />
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>{course.completedLessons}/{course.totalLessons} 课时</span>
+                        <span>课程进度</span>
+                      </div>
+                      
+                      <div className="pt-3 border-t">
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="text-center p-3 bg-blue-50 rounded-lg">
+                            <div className="font-medium text-lg text-blue-600">{stats.completedChapters}/{stats.totalChapters}</div>
+                            <div className="text-sm text-muted-foreground">章节完成</div>
+                          </div>
+                          <div className="text-center p-3 bg-amber-50 rounded-lg">
+                            <div className="font-medium text-lg text-amber-600">{stats.completedKnowledge}/{stats.totalKnowledge}</div>
+                            <div className="text-sm text-muted-foreground">知识点完成</div>
+                          </div>
                         </div>
                       </div>
                     </div>
